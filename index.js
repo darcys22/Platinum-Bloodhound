@@ -4,7 +4,7 @@ var calculator     = require('./lib/');
 // configuration ===========================================
 	
 // config files
-var db = require('./config/db');
+var dbconfig = require('./config/db');
 
 
 var db = mongoose.connection;
@@ -17,5 +17,5 @@ db.once('open', function (callback) {
 
 });
 
-mongoose.connect(db.url); // connect to our mongoDB database
+mongoose.connect(dbconfig.url); // connect to our mongoDB database
 
