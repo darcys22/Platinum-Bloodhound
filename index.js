@@ -1,31 +1,18 @@
 // modules =================================================
 var mongoose       = require('mongoose');
-var calculator     = require('./lib/');
-//var mongo          = require('mongodb').MongoClient;
+var library        = require('./lib/');
 var assert         = require('assert');
-//var _              = require('underscore');
 // configuration ===========================================
 	
-// config files
-var dbconfig = require('./config/db');
+mongoose.connect(library.config.db.url);
 
-mongoose.connect(dbconfig.url);
-
-var Schema = mongoose.Schema;
-
-var UserSchema = new Schema({
-  id : {type : String, required: true},
-  email : {type : String},
-  books : [{type: Schema.Types.ObjectId}]
-});
-
-
-var User = mongoose.model('User', UserSchema);
+var User = library.User;
+var Book = library.Book;
 
 User.find({}, 'books', function (err, users) {
   assert.equal(null, err);
 
-  var top100 = calculator(users);
+  var top100 = library.calculator(users);
 
   console.log(top100);
   process.exit();
