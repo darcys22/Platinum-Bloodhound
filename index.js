@@ -2,29 +2,39 @@
 var mongoose       = require('mongoose');
 var library        = require('./lib/');
 var assert         = require('assert');
-// configuration ===========================================
+var CronJob        = require('cron').CronJob;
 	
-mongoose.connect(library.config.db.url);
+function updateTopBooks(dbUrl) {
 
-var User = library.User;
-var Book = library.Book;
+  mongoose.connect(dbUrl);
 
-User.find({}, 'books', function (err, users) {
+  var User = library.User;
+  var Book = library.Book;
 
-  assert.equal(null, err);
+  User.find({}, 'books', function (err, users) {
 
-  var top100 = library.calculator(users);
+    assert.equal(null, err);
 
-  Book.update({}, {rank: 0, votes: 0}, {multi: true}, function(err) { 
-    assert.equal(null, err) 
+    var top100 = library.calculator(users);
 
-    library.save(top100, Book).then(function(bulkRes){
-      console.log('Bulk complete.');
-      process.exit();
-    }, function(err){
-        console.log('Bulk Error:', err);
-        process.exit();
+    Book.update({}, {rank: 0, votes: 0}, {multi: true}, function(err) { 
+      assert.equal(null, err) 
+
+      library.save(top100, Book).then(function(bulkRes){
+        console.log('Bulk complete.');
+        mongoose.connection.close()
+      }, function(err){
+          console.log('Bulk Error:', err);
+          mongoose.connection.close()
+      });
     });
-  });
 
-});
+  });
+};
+
+module.exports = function(dbUrl) {
+  //new CronJob('*/20 * * * * *', function() {
+  new CronJob('00 30 11 * * *', function() {
+      updateTopBooks(dbUrl);
+  }, null, true, 'America/Los_Angeles');
+};
