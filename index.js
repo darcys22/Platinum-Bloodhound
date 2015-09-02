@@ -8,12 +8,9 @@ var library        = require('./lib/');
 var assert         = require('assert');
 var CronJob        = require('cron').CronJob;
 	
-function updateTopBooks(dbUrl) {
+function updateTopBooks(dbUrl, User, Book) {
 
   mongoose.connect(dbUrl);
-
-  var User = library.User;
-  var Book = library.Book;
 
   User.find({}, 'books', function (err, users) {
 
@@ -35,10 +32,10 @@ function updateTopBooks(dbUrl) {
 
   });
 };
-var bookschedule = function(dbUrl) {
+var bookschedule = function(dbUrl, User, Book) {
   //new CronJob('*/5 * * * * *', function() {
   new CronJob('00 30 11 * * *', function() {
-      updateTopBooks(dbUrl);
+      updateTopBooks(dbUrl, User, Book);
   }, null, true, 'America/Los_Angeles');
 };
 
