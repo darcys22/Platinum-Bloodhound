@@ -1,3 +1,7 @@
+#!/usr/bin/env node
+
+(function() {
+
 // modules =================================================
 var mongoose       = require('mongoose');
 var library        = require('./lib/');
@@ -31,10 +35,18 @@ function updateTopBooks(dbUrl) {
 
   });
 };
-
-module.exports = function(dbUrl) {
+var bookschedule = function(dbUrl) {
   //new CronJob('*/20 * * * * *', function() {
   new CronJob('00 30 11 * * *', function() {
       updateTopBooks(dbUrl);
   }, null, true, 'America/Los_Angeles');
 };
+
+module.exports = bookschedule;
+
+if (!module.parent) {
+  bookschedule(process.argv[2]);
+}
+
+})();
+  
