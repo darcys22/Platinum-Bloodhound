@@ -8,9 +8,10 @@ var library        = require('./lib/');
 var assert         = require('assert');
 var CronJob        = require('cron').CronJob;
 	
-function updateTopBooks(dbUrl, User, Book) {
+function updateTopBooks(User, Book, dbUrl) {
 
-  mongoose.connect(dbUrl);
+
+  if (dbUrl) {mongoose.connect(dbUrl)}
 
   User.find({}, 'books', function (err, users) {
 
@@ -23,10 +24,14 @@ function updateTopBooks(dbUrl, User, Book) {
 
       library.save(top100, Book).then(function(bulkRes){
         console.log('Bulk complete.');
-        mongoose.connection.close()
+          if (dbUrl) {
+            mongoose.connection.close();
+          }
       }, function(err){
           console.log('Bulk Error:', err);
-          mongoose.connection.close()
+          if (dbUrl) {
+            mongoose.connection.close();
+          }
       });
     });
 
