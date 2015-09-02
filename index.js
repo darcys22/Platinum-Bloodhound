@@ -37,10 +37,10 @@ function updateTopBooks(User, Book, dbUrl) {
 
   });
 };
-var bookschedule = function(dbUrl, User, Book) {
+var bookschedule = function(User, Book, dbUrl) {
   new CronJob('*/5 * * * * *', function() {
   //new CronJob('00 30 11 * * *', function() {
-      updateTopBooks(dbUrl, User, Book);
+      updateTopBooks(User, Book, dbUrl);
   }, null, true, 'America/Los_Angeles');
 };
 
